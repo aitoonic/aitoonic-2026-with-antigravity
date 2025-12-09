@@ -1,0 +1,44 @@
+# # robots.txt for aitoonic.com
+# Last updated: 2025-08
+# Allow all important pages for indexing
+User-agent: *
+
+# ✅ Main pages
+Allow: /$
+Allow: /ai/
+Allow: /ai/*
+Allow: /ai-agent
+Allow: /categories
+Allow: /category/
+Allow: /category/*
+Allow: /compare/
+Allow: /compare/*
+Allow: /about
+Allow: /privacy
+Allow: /terms
+
+# ❌ Block internal Next.js and system files
+Disallow: /_next/
+Disallow: /api/
+Disallow: /404
+Disallow: /500
+
+# ❌ Block search/filter query duplicates
+Disallow: /*?*
+Disallow: /*&*
+
+# ✅ Sitemaps
+Sitemap: https://aitoonic.com/sitemap.xml
+Sitemap: https://aitoonic.com/sitemap-tools.xml
+Sitemap: https://aitoonic.com/sitemap-categories.xml
+Sitemap: https://aitoonic.com/sitemap-agents.xml
+Sitemap: https://aitoonic.com/sitemap-compare.xml
+# If you paginate compare sitemaps:
+# Sitemap: https://aitoonic.com/sitemap-compare-index.xml
+
+# Optional: control aggressive SEO bots (Google ignores Crawl-delay)
+User-agent: AhrefsBot
+Crawl-delay: 5
+
+User-agent: SemrushBot
+Crawl-delay: 5

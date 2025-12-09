@@ -1,0 +1,13 @@
+{
+    "name": "aitoonic-root-proxy",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+        "setup": "npm install --prefix \"nextjs14-aitoonic-done-6f39dc615d7f60bda2451a6f24bd9972a282e1d4\"",
+        "dev": "npm run dev --prefix \"nextjs14-aitoonic-done-6f39dc615d7f60bda2451a6f24bd9972a282e1d4\"",
+        "build": "npm run build --prefix \"nextjs14-aitoonic-done-6f39dc615d7f60bda2451a6f24bd9972a282e1d4\"",
+        "start": "npm run start --prefix \"nextjs14-aitoonic-done-6f39dc615d7f60bda2451a6f24bd9972a282e1d4\"",
+        "lint": "npm run lint --prefix \"nextjs14-aitoonic-done-6f39dc615d7f60bda2451a6f24bd9972a282e1d4\""
+    },
+    "description": "Proxy scripts to run commands in the project subdirectory. Run 'npm run setup' to install dependencies."
+}

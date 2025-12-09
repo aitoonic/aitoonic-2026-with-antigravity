@@ -1,0 +1,207 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Dark-only theme */
+    color-scheme: dark;
+    /* Brand */
+    --primary: 248 100% 67%; /* #635BFF */
+    --primary-foreground: 0 0% 100%;
+    --accent: 191 83% 53%;   /* #22D3EE */
+    --accent-foreground: 210 40% 98%;
+
+    /* Surfaces */
+    --background: 221 57% 7%;   /* #0B1220 */
+    --foreground: 220 14% 94%;  /* #E5E7EB */
+    --card: 220 20% 10%;        /* #111827 */
+    --card-foreground: 220 14% 94%;
+    --popover: 222 47% 12%;     /* close to #0F172A */
+    --popover-foreground: 220 14% 94%;
+
+    /* Muted/secondary */
+    --secondary: 222 32% 17%;
+    --secondary-foreground: 220 14% 94%;
+    --muted: 222 32% 17%;
+    --muted-foreground: 220 12% 66%;
+
+    /* Status */
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    /* Borders/inputs/rings */
+    --border: 213 34% 20%;
+    --input: 213 34% 20%;
+    --ring: 248 100% 67%;
+
+    /* Radius */
+    --radius: 0.6rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    color-scheme: dark;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0f172a22;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1f2937;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+
+/* Motion-safe smooth animations */
+.fade-in {
+  @apply motion-safe:animate-[fadeIn_0.6s_ease-in];
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hover-scale {
+  @apply transition-transform duration-200 ease-in-out motion-safe:scale-100;
+}
+
+.hover-scale:hover {
+  @apply motion-safe:scale-[1.02];
+}
+
+/* Neon aurora animated background */
+@keyframes auroraShift {
+  0% { transform: translate3d(-10%, -10%, 0) scale(1); filter: blur(40px); }
+  50% { transform: translate3d(10%, 5%, 0) scale(1.05); filter: blur(48px); }
+  100% { transform: translate3d(-5%, 10%, 0) scale(1.02); filter: blur(40px); }
+}
+
+@layer utilities {
+  .neon-aurora {
+    position: fixed;
+    inset: 0;
+    z-index: -20;
+    pointer-events: none;
+    opacity: 0.25;
+    background:
+      radial-gradient(40% 35% at 20% 20%, hsl(var(--primary) / 0.35), transparent 60%),
+      radial-gradient(35% 30% at 80% 30%, hsl(var(--accent) / 0.35), transparent 60%),
+      radial-gradient(45% 40% at 50% 80%, hsl(var(--primary) / 0.25), transparent 60%);
+    mix-blend-mode: screen;
+    animation: auroraShift 14s ease-in-out infinite alternate;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .neon-aurora { animation: none; opacity: 0.18; }
+  }
+
+  /* slow blink utility for loading/fallback icons */
+  @keyframes blinkSlow {
+    0% { opacity: 0.45; }
+    100% { opacity: 1; }
+  }
+  .blink-slow {
+    animation: blinkSlow 1.2s ease-in-out infinite alternate;
+  }
+}
+
+/* Global Layout Fixes */
+:root {
+  --max-page-width: 100%;
+}
+
+/* Base element styles to prevent overflow */
+html, 
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  position: relative;
+  box-sizing: border-box;
+  touch-action: pan-y;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+*, 
+*::before, 
+*::after {
+  box-sizing: inherit;
+}
+
+/* Ensure media elements are responsive */
+img,
+video,
+svg,
+iframe,
+object,
+embed {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Text overflow handling */
+.text-balance {
+  text-wrap: balance;
+}
+
+.text-ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.text-wrap-anywhere {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* Full width container */
+.full-bleed {
+  width: 100%;
+  max-width: 100vw;
+  margin-left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Debug mode for overflow detection */
+.debug-overflow * {
+  outline: 1px solid #ff00ff;
+}
+
+/* Optional: If you want to allow pull-to-refresh only at the top of the page */
+/* Uncomment this if you want to keep pull-to-refresh but remove edge swipes */
+/*
+html {
+  overscroll-behavior-y: contain;
+}
+* {
+  overscroll-behavior-y: contain;
+}
+*/

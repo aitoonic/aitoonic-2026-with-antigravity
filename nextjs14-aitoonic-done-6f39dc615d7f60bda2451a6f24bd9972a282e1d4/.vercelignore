@@ -1,0 +1,14 @@
+# Exclude local build artifacts and nested folders from deployment upload
+.next/
+out/
+**/*.log
+.DS_Store
+.git/
+.gitignore
+.vercel/
+
+# Exclude the nested copy if present
+aitoonic-nextjs/
+
+# Optional: editor configs
+.vscode/
