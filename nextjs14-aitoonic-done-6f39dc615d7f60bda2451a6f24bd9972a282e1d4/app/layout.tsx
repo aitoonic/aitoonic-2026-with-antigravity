@@ -5,6 +5,7 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import { getCanonicalUrl, defaultRobots } from '@/lib/seo/canonical'
 import { OverflowDebugger } from '@/components/debug/OverflowDebugger'
+import { createClient } from '@/utils/supabase/server'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -31,11 +32,13 @@ export const metadata: Metadata = {
   }
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -55,7 +58,7 @@ export default function RootLayout({
         />
       </head>
       <body className={`${inter.className} bg-background text-foreground antialiased`}>
-        <Header />
+        <Header user={user} />
         <main>
           {/* lightweight hero gradient layer */}
           <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 bg-gradient-to-b from-primary/10 to-transparent dark:from-primary/20" style={{ height: '40vh' }} />

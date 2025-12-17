@@ -7,6 +7,9 @@ import { useRouter } from 'next/navigation'
 import { Tool, Category } from '@/lib/types'
 import ToolCard from '@/components/ToolCard'
 import { sanitizeHtml } from '@/lib/sanitize'
+import VoteButton from '@/components/VoteButton'
+import SaveButton from '@/components/SaveButton'
+import AuthPopup from '@/components/AuthPopup'
 
 interface ToolDetailClientProps {
   tool: Tool
@@ -37,6 +40,7 @@ function LazySection({ children, rootMargin = '250px 0px', minHeight = '1px' }: 
 export default function ToolDetailClient({ tool, category, similarTools, sanitizedHowToUse }: ToolDetailClientProps) {
   const [embedTheme, setEmbedTheme] = useState<'white' | 'black'>('white')
   const [showCompareOptions, setShowCompareOptions] = useState(false)
+  const [showAuthPopup, setShowAuthPopup] = useState(false)
   const router = useRouter()
 
   // Section refs for scroll-to-section behavior
@@ -270,6 +274,24 @@ export default function ToolDetailClient({ tool, category, similarTools, sanitiz
                         )}
                       </div>
                     )}
+
+                    {/* Save Button */}
+                    <div className="inline-flex">
+                      <SaveButton
+                        toolId={tool.id}
+                        onAuthRequired={() => setShowAuthPopup(true)}
+                        className="w-12 h-12 border border-border bg-card hover:bg-accent rounded-md !rounded-md"
+                      />
+                    </div>
+
+                    {/* Rank Up Button */}
+                    <div className="inline-flex">
+                      <VoteButton
+                        toolId={tool.id}
+                        onAuthRequired={() => setShowAuthPopup(true)}
+                        className="h-12 border border-border bg-card hover:bg-accent rounded-md px-4"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -485,6 +507,11 @@ export default function ToolDetailClient({ tool, category, similarTools, sanitiz
           </div>
         </div>
       </div>
+      <AuthPopup
+        isOpen={showAuthPopup}
+        onClose={() => setShowAuthPopup(false)}
+        message="Sign up or log in to save tools and vote."
+      />
     </div>
   )
 }

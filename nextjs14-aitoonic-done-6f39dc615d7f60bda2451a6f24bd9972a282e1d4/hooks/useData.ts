@@ -31,9 +31,20 @@ export function useCategories(enabled: boolean = true): UseDataResult<Category[]
     try {
       setLoading(true)
       setError(null)
-      const result = await getCategories()
+
+      // Add timeout race
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Request timed out')), 8000)
+      )
+
+      const result = await Promise.race([
+        getCategories(),
+        timeoutPromise
+      ]) as Category[]
+
       setData(result)
     } catch (err) {
+      console.error('useCategories error:', err)
       setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {
       setLoading(false)
@@ -186,7 +197,7 @@ export function useFilteredTools(filterType: 'today' | 'new' | 'popular'): UseDa
       setLoading(true)
       setError(null)
       let result: Tool[]
-      
+
       switch (filterType) {
         case 'today':
           result = await getTodaysTools()
@@ -200,7 +211,7 @@ export function useFilteredTools(filterType: 'today' | 'new' | 'popular'): UseDa
         default:
           result = []
       }
-      
+
       setData(result)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
