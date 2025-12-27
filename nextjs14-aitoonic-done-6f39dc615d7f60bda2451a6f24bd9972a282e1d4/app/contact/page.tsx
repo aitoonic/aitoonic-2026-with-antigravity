@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { defaultRobots, getCanonicalUrl } from '@/lib/seo/canonical'
 import { sanitizeJsonLd } from '@/lib/sanitize-jsonld'
-import { getCSRFTokenForRender } from '@/lib/csrf'
+import { getCSRFTokenForRender } from '@/lib/server/security/csrf'
 import ContactForm from '@/components/ContactForm'
 
 export const metadata: Metadata = {
@@ -16,18 +16,18 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   // Generate CSRF token for the form
   const csrfToken = getCSRFTokenForRender();
-  
+
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <h1 className="text-4xl font-bold text-foreground mb-6">Contact</h1>
       <p className="text-muted-foreground mb-6">Get in touch with the Aitoonic team using the form below or through our contact details:</p>
-      
+
       <div className="grid md:grid-cols-2 gap-8 mb-12">
         <div>
           <h2 className="text-xl font-semibold text-foreground mb-4">Send us a message</h2>
           <ContactForm csrfToken={csrfToken} />
         </div>
-        
+
         <div>
           <h2 className="text-xl font-semibold text-foreground mb-4">Contact Information</h2>
           <ul className="list-disc pl-6 space-y-2 text-muted-foreground">

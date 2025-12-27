@@ -10,9 +10,10 @@ interface VoteButtonProps {
     initialCount?: number // If we have it from parent
     onAuthRequired: () => void
     className?: string
+    showLabel?: boolean
 }
 
-export default function VoteButton({ toolId, initialCount = 0, onAuthRequired, className = '' }: VoteButtonProps) {
+export default function VoteButton({ toolId, initialCount = 0, onAuthRequired, className = '', showLabel = false }: VoteButtonProps) {
     const { user } = useAuth()
     const [count, setCount] = useState(initialCount)
     const [hasVoted, setHasVoted] = useState(false)
@@ -174,12 +175,15 @@ export default function VoteButton({ toolId, initialCount = 0, onAuthRequired, c
                 className={`w-5 h-5 transition-all duration-300 ${hasVoted ? 'stroke-orange-500 scale-110' : 'group-hover:-translate-y-0.5'
                     }`}
             />
-            <span className="text-sm font-bold tabular-nums leading-none">
-                {count}
-            </span>
-            <span className="text-xs font-medium opacity-70">
-                Rank Up
-            </span>
+            <div className="flex flex-col items-center leading-none">
+                <span className="text-sm font-bold tabular-nums">
+                    {count}
+                </span>
+                {showLabel && (
+                    <span className="text-xs font-medium opacity-70 mt-0.5">Rank Up</span>
+                )}
+            </div>
+
         </div>
     )
 }

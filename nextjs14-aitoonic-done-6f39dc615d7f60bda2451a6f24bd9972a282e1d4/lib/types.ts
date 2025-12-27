@@ -2,7 +2,7 @@ export interface Tool {
   id: string
   slug?: string
   name: string
-  description: string
+  description?: string
   url?: string
   category_id: string
   created_at?: string

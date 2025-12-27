@@ -13,7 +13,9 @@ interface ComparisonPageProps {
 }
 
 // Keep this route dynamic to avoid generating millions of params; we’ll optimize client-side
-export const dynamic = 'force-dynamic'
+// Optimization: Switched from force-dynamic to ISR to cache results and reduce egress from bots.
+export const revalidate = 3600 // Cache for 1 hour
+// export const dynamic = 'force-dynamic' // Removed to allow caching
 
 export async function generateMetadata({ params }: ComparisonPageProps): Promise<Metadata> {
   try {

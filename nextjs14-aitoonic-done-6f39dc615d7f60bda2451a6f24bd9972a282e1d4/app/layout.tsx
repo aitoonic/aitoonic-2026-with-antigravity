@@ -1,11 +1,12 @@
 import './globals.css'
+import { Toaster } from 'sonner'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import { getCanonicalUrl, defaultRobots } from '@/lib/seo/canonical'
-import { OverflowDebugger } from '@/components/debug/OverflowDebugger'
-import { createClient } from '@/utils/supabase/server'
+
+
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -37,8 +38,8 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  // Optimization: Removed server-side auth check to prevent global SSR and reduce DB egress.
+  // Header will handle auth state client-side.
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -58,7 +59,7 @@ export default async function RootLayout({
         />
       </head>
       <body className={`${inter.className} bg-background text-foreground antialiased`}>
-        <Header user={user} />
+        <Header />
         <main>
           {/* lightweight hero gradient layer */}
           <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 bg-gradient-to-b from-primary/10 to-transparent dark:from-primary/20" style={{ height: '40vh' }} />
@@ -67,7 +68,7 @@ export default async function RootLayout({
           {children}
         </main>
         <Footer />
-        {process.env.NODE_ENV === 'development' && <OverflowDebugger />}
+        <Toaster />
       </body>
     </html>
   )

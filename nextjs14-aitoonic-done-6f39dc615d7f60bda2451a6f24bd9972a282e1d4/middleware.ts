@@ -1,6 +1,8 @@
 import { NextResponse, NextRequest } from 'next/server';
-import { csrfMiddleware } from './lib/csrf';
-import { updateSession } from './utils/supabase/middleware';
+import { csrfMiddleware } from '@/lib/server/security/csrf';
+import { updateSession } from '@/lib/server/auth/middleware';
+import { rateLimit } from '@/lib/server/security/rate-limit';
+import { applySecurityHeaders, checkBot } from '@/lib/server/security/headers';
 
 /**
  * Next.js Middleware
@@ -9,17 +11,44 @@ import { updateSession } from './utils/supabase/middleware';
  * and manages Supabase Auth sessions.
  */
 export async function middleware(request: NextRequest) {
-  // Apply CSRF protection to form submissions
-  // Note: CSRF middleware might return a response if validation fails
-  // Apply CSRF protection to form submissions
-  // Note: CSRF middleware might return a response if validation fails
-  // const csrfResponse = await csrfMiddleware(request);
-  // if (csrfResponse) {
-  //   return csrfResponse;
-  // }
+  const response = await updateSession(request);
 
-  // Update Supabase session
-  return await updateSession(request);
+  // 1. Security Headers
+  applySecurityHeaders(response.headers);
+
+  // 2. Bot Mitigation (Basic User-Agent Check)
+  // Only apply to API routes to avoid accidentally blocking crawlers on content pages
+  if (request.nextUrl.pathname.startsWith('/api')) {
+    if (checkBot(request.headers.get('user-agent'))) {
+      return new NextResponse('Bot detected', { status: 403 });
+    }
+  }
+
+  // 3. Rate Limiting for API routes
+  if (request.nextUrl.pathname.startsWith('/api')) {
+    const limiter = rateLimit(request);
+
+    if (limiter.isRateLimited) {
+      return new NextResponse('Too Many Requests', {
+        status: 429,
+        headers: limiter.headers as any
+      });
+    }
+
+    // Add rate limit headers to legitimate response
+    Object.entries(limiter.headers).forEach(([k, v]) => {
+      response.headers.set(k, v);
+    });
+
+    // Update state cookie
+    response.cookies.set(limiter.cookie.name, limiter.cookie.value, limiter.cookie.options);
+  }
+
+  // 4. Method Allow-List (Strict) is hard to genericize here without knowing route map.
+  // Instead, individual routes (which we "thinned") are robust. 
+  // We can enforce that GET requests don't have bodies? No, Next.js handles that.
+
+  return response;
 }
 
 // Configure which paths this middleware runs on

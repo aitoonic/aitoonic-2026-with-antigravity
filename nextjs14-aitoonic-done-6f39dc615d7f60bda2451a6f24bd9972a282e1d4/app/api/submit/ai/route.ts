@@ -1,59 +1,39 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { validateCSRFToken } from '@/lib/csrf';
+import { validateCSRFToken } from '@/lib/server/security/csrf';
+import { submitToolAction } from '@/lib/server/actions/submit';
 
-// Ensure Node.js runtime (Nodemailer is not compatible with Edge runtime)
+// Ensure Node.js runtime
 export const runtime = 'nodejs';
 
 /**
  * API route handler for AI tool submissions
- * Includes CSRF validation for security
+ * Delegates logic to Server Action
  */
 export async function POST(request: NextRequest) {
   try {
-    // Parse the request body
     const body = await request.json();
-    const { toolName, toolUrl, description, email, csrf_token } = body;
-    
-    // Validate CSRF token
+    const { csrf_token } = body;
+
+    // Validate CSRF at the edge (Controller level)
     if (!validateCSRFToken(request, csrf_token)) {
       return NextResponse.json(
         { error: 'Invalid CSRF token' },
         { status: 403 }
       );
     }
-    
-    // Validate required fields
-    if (!toolName || !toolUrl || !description || !email) {
-      return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 }
-      );
-    }
-    
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return NextResponse.json(
-        { error: 'Invalid email format' },
-        { status: 400 }
-      );
-    }
-    
-    // Validate URL format
+
     try {
-      new URL(toolUrl);
-    } catch (error) {
+      await submitToolAction(body);
       return NextResponse.json(
-        { error: 'Invalid URL format' },
+        { success: true, message: 'AI tool submitted successfully' },
+        { status: 200 }
+      );
+    } catch (err: any) {
+      return NextResponse.json(
+        { error: err.message || 'Submission failed' },
         { status: 400 }
       );
     }
-    
-    // Return success response
-    return NextResponse.json(
-      { success: true, message: 'AI tool submitted successfully' },
-      { status: 200 }
-    );
   } catch (error) {
     console.error('AI tool submission error:', error);
     return NextResponse.json(

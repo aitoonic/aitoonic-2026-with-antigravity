@@ -1,6 +1,9 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import { Suspense } from 'react'
+import ReviewSkeleton from '@/components/reviews/review-skeleton'
 import ToolDetailClient from './ToolDetailClient'
+import ReviewSection from '@/components/reviews/review-section'
 import { getToolBySlug, getTools, getSimilarTools, getCategoryById } from '@/lib/api'
 import { Tool } from '@/lib/types'
 import { getCanonicalUrl, defaultRobots } from '@/lib/seo/canonical'
@@ -34,7 +37,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: ToolDetailPageProps): Promise<Metadata> {
   try {
     const tool = await getToolBySlug(params.slug)
-    
+
     if (!tool) {
       return {
         title: 'Tool Not Found - Aitoonic',
@@ -54,14 +57,14 @@ export async function generateMetadata({ params }: ToolDetailPageProps): Promise
 
     // Generate JSON-LD structured data
     const toolJsonLd = generateToolJsonLd(tool, categoryName);
-    
+
     // Generate breadcrumb JSON-LD
     const breadcrumbItems = [
       { name: 'Home', url: 'https://aitoonic.com/' },
       { name: categoryName || 'AI Tools', url: categoryName ? `https://aitoonic.com/category/${categoryName.toLowerCase().replace(/\s+/g, '-')}/` : 'https://aitoonic.com/categories/' },
       { name: tool.name, url: `https://aitoonic.com/ai/${tool.slug}/` }
     ];
-    
+
     const breadcrumbJsonLd = generateBreadcrumbJsonLd(breadcrumbItems);
 
     return {
@@ -103,7 +106,7 @@ export default async function ToolDetailPage({ params }: ToolDetailPageProps) {
   try {
     // First try to find tool by the slug parameter
     let tool = await getToolBySlug(params.slug)
-    
+
     // If not found by slug, try to find by name (fallback for tools without slug)
     if (!tool) {
       // This is a fallback - in a real app you might want to implement a search by name
@@ -149,12 +152,18 @@ export default async function ToolDetailPage({ params }: ToolDetailPageProps) {
           type="application/ld+json"
           dangerouslySetInnerHTML={sanitizeJsonLd(breadcrumbJsonLd)}
         />
-        <ToolDetailClient 
-          tool={tool} 
+        <ToolDetailClient
+          tool={tool}
           category={category}
           similarTools={similarTools}
           sanitizedHowToUse={sanitizedHowToUse || undefined}
         />
+
+        <div id="reviews" className="mt-16 container mx-auto px-4 max-w-7xl scroll-mt-24">
+          <Suspense fallback={<ReviewSkeleton />}>
+            <ReviewSection toolId={tool.id} />
+          </Suspense>
+        </div>
       </>
     )
   } catch (error) {

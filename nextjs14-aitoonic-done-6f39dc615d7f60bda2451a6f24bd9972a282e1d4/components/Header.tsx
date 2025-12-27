@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { useState, useEffect } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { User as SupabaseUser } from '@supabase/supabase-js'
-import { User, LogIn, Menu, X } from 'lucide-react'
+import { User, LogIn, Menu, X, ChevronDown } from 'lucide-react'
 
 
 interface HeaderProps {
@@ -104,7 +104,7 @@ export default function Header({ user: initialUser }: HeaderProps) {
                 href="/ai-tools-directory"
                 className="text-muted-foreground hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors"
               >
-                AI Tools Directory
+                AI Tools
               </Link>
               <Link
                 href="/ai-agent"
@@ -118,28 +118,68 @@ export default function Header({ user: initialUser }: HeaderProps) {
               >
                 Compare
               </Link>
-              <Link
-                href="/submit-ai"
-                className="text-muted-foreground hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors"
-              >
-                Submit Your AI
-              </Link>
-              <Link
-                href="/submit-gpt"
-                className="text-muted-foreground hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors"
-              >
-                Submit GPT
-              </Link>
+
+              {/* Submit Dropdown */}
+              <div className="relative group">
+                <button className="flex items-center gap-1 text-muted-foreground hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors focus:outline-none">
+                  Submit & Grow <ChevronDown size={14} />
+                </button>
+                <div className="absolute left-0 w-56 mt-0 origin-top-right bg-card border border-border rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                  <div className="py-1">
+                    <Link href="/submit-ai" className="block px-4 py-2 text-sm text-foreground hover:bg-secondary hover:text-primary">
+                      Submit AI Tool (Hub)
+                    </Link>
+                    <Link href="/submit-ai-tool" className="block px-4 py-2 text-sm text-foreground hover:bg-secondary hover:text-primary">
+                      Free Submission
+                    </Link>
+                    <Link href="/featured-ai-tools" className="block px-4 py-2 text-sm text-foreground hover:bg-secondary hover:text-primary">
+                      Get Featured
+                    </Link>
+                    <Link href="/submit-gpt" className="block px-4 py-2 text-sm text-foreground hover:bg-secondary hover:text-primary">
+                      Submit GPT
+                    </Link>
+                    <Link href="/ai-tool-launch" className="block px-4 py-2 text-sm text-foreground hover:bg-secondary hover:text-primary">
+                      Launch Service
+                    </Link>
+                    <Link href="/advertise" className="block px-4 py-2 text-sm text-foreground hover:bg-secondary hover:text-primary">
+                      Advertise
+                    </Link>
+                    <Link href="/guest-post" className="block px-4 py-2 text-sm text-foreground hover:bg-secondary hover:text-primary">
+                      Guest Post
+                    </Link>
+                  </div>
+                </div>
+              </div>
 
               {/* Auth Button */}
               {!loading && (
                 user ? (
                   <Link
                     href="/profile"
-                    className="flex items-center gap-2 bg-primary/10 text-primary hover:bg-primary/20 px-4 py-2 rounded-full text-sm font-medium transition-colors"
+                    className="flex items-center gap-2 pl-1 pr-3 py-1 bg-secondary/50 hover:bg-secondary rounded-full border border-border transition-all duration-200"
                   >
-                    <User size={16} />
-                    Profile
+                    <div className="relative w-8 h-8 rounded-full overflow-hidden bg-muted ring-1 ring-border">
+                      {user.user_metadata?.avatar_url ? (
+                        <Image
+                          src={user.user_metadata.avatar_url}
+                          alt={user.user_metadata?.full_name || 'User'}
+                          width={32}
+                          height={32}
+                          className="object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full grid place-items-center bg-primary/10 text-primary font-bold text-xs">
+                          {(user.user_metadata?.full_name || user.email || 'U').charAt(0).toUpperCase()}
+                        </div>
+                      )}
+                    </div>
+                    <span className="text-sm font-medium max-w-[100px] truncate">
+                      {user.user_metadata?.full_name
+                        ? (user.user_metadata.full_name.length > 6
+                          ? user.user_metadata.full_name.substring(0, 6) + '...'
+                          : user.user_metadata.full_name)
+                        : (user.email?.split('@')[0].substring(0, 6) + '...' || 'User')}
+                    </span>
                   </Link>
                 ) : (
                   <Link
@@ -184,7 +224,7 @@ export default function Header({ user: initialUser }: HeaderProps) {
         {/* Mobile menu */}
         {isMenuOpen && (
           <div className="md:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-card border-t border-border rounded-b-md shadow-sm">
+            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-card border-t border-border rounded-b-md shadow-sm h-[80vh] overflow-y-auto">
               <Link
                 href="/"
                 className="text-foreground hover:text-primary block px-3 py-2 rounded-md text-base font-medium"
@@ -204,7 +244,7 @@ export default function Header({ user: initialUser }: HeaderProps) {
                 className="text-muted-foreground hover:text-primary block px-3 py-2 rounded-md text-base font-medium"
                 onClick={() => setIsMenuOpen(false)}
               >
-                AI Tools Directory
+                AI Tools
               </Link>
               <Link
                 href="/ai-agent"
@@ -220,27 +260,60 @@ export default function Header({ user: initialUser }: HeaderProps) {
               >
                 Compare
               </Link>
-              <Link
-                href="/submit-ai"
-                className="text-muted-foreground hover:text-primary block px-3 py-2 rounded-md text-base font-medium"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Submit Your AI
-              </Link>
-              <Link
-                href="/submit-gpt"
-                className="text-muted-foreground hover:text-primary block px-3 py-2 rounded-md text-base font-medium"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Submit GPT
-              </Link>
-              <Link
-                href="/advertise"
-                className="text-muted-foreground hover:text-primary block px-3 py-2 rounded-md text-base font-medium"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Advertise
-              </Link>
+
+              <div className="my-2 border-t border-border pt-2 pb-2">
+                <p className="px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Submit & Grow</p>
+                <Link
+                  href="/submit-ai"
+                  className="text-muted-foreground hover:text-primary block px-3 py-2 rounded-md text-base font-medium pl-6"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Hub Page
+                </Link>
+                <Link
+                  href="/submit-ai-tool"
+                  className="text-muted-foreground hover:text-primary block px-3 py-2 rounded-md text-base font-medium pl-6"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Free Submission
+                </Link>
+                <Link
+                  href="/featured-ai-tools"
+                  className="text-muted-foreground hover:text-primary block px-3 py-2 rounded-md text-base font-medium pl-6"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Get Featured
+                </Link>
+                <Link
+                  href="/submit-gpt"
+                  className="text-muted-foreground hover:text-primary block px-3 py-2 rounded-md text-base font-medium pl-6"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Submit GPT
+                </Link>
+                <Link
+                  href="/ai-tool-launch"
+                  className="text-muted-foreground hover:text-primary block px-3 py-2 rounded-md text-base font-medium pl-6"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Launch Service
+                </Link>
+                <Link
+                  href="/advertise"
+                  className="text-muted-foreground hover:text-primary block px-3 py-2 rounded-md text-base font-medium pl-6"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Advertise
+                </Link>
+                <Link
+                  href="/guest-post"
+                  className="text-muted-foreground hover:text-primary block px-3 py-2 rounded-md text-base font-medium pl-6"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Guest Post
+                </Link>
+              </div>
+
 
               <div className="border-t border-border my-2 pt-2">
                 {user ? (

@@ -1,5 +1,5 @@
 import { Category } from '@/lib/types'
-import { generateCategoryContent } from './gemini'
+import { generateCategoryContent } from '@/lib/server/actions/gemini'
 
 // Clear cache when content needs to be regenerated
 let contentCache: Record<string, any> = {}

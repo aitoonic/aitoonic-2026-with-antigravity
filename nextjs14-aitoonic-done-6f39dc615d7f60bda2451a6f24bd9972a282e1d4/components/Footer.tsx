@@ -4,15 +4,52 @@ export default function Footer() {
   return (
     <footer className="bg-muted text-muted-foreground border-t border-border">
       <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
           {/* Company Info */}
           <div className="col-span-1 md:col-span-2">
             <div className="text-2xl font-bold mb-4 text-foreground">Aitoonic</div>
             <p className="mb-4 max-w-md">
-              Discover the best AI tools and platforms to enhance your productivity and business. 
+              Discover the best AI tools and platforms to enhance your productivity and business.
               From chatbots to analytics, find the perfect AI solution for your needs.
             </p>
             {/* social icons removed per request */}
+          </div>
+
+          {/* Submit & Grow - NEW SECTION */}
+          <div>
+            <h3 className="text-lg font-semibold mb-4 text-foreground">Submit & Grow</h3>
+            <ul className="space-y-2">
+              <li>
+                <Link href="/submit-ai" className="hover:text-foreground transition-colors">
+                  Hub Page
+                </Link>
+              </li>
+              <li>
+                <Link href="/submit-ai-tool" className="hover:text-foreground transition-colors">
+                  Free Submission
+                </Link>
+              </li>
+              <li>
+                <Link href="/featured-ai-tools" className="hover:text-foreground transition-colors">
+                  Get Featured
+                </Link>
+              </li>
+              <li>
+                <Link href="/ai-tool-launch" className="hover:text-foreground transition-colors">
+                  Launch Service
+                </Link>
+              </li>
+              <li>
+                <Link href="/advertise" className="hover:text-foreground transition-colors">
+                  Advertise
+                </Link>
+              </li>
+              <li>
+                <Link href="/guest-post" className="hover:text-foreground transition-colors">
+                  Guest Post
+                </Link>
+              </li>
+            </ul>
           </div>
 
           {/* Quick Links */}
@@ -30,6 +67,11 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/ai-tools-directory" className="hover:text-foreground transition-colors">
+                  AI Tools
+                </Link>
+              </li>
+              <li>
                 <Link href="/ai-agent" className="hover:text-foreground transition-colors">
                   AI Agents
                 </Link>
@@ -37,21 +79,6 @@ export default function Footer() {
               <li>
                 <Link href="/compare" className="hover:text-foreground transition-colors">
                   Compare
-                </Link>
-              </li>
-              <li>
-                <Link href="/submit-ai" className="hover:text-foreground transition-colors">
-                  Submit Your AI
-                </Link>
-              </li>
-              <li>
-                <Link href="/submit-gpt" className="hover:text-foreground transition-colors">
-                  Submit GPT
-                </Link>
-              </li>
-              <li>
-                <Link href="/advertise" className="hover:text-foreground transition-colors">
-                  Advertise
                 </Link>
               </li>
               <li>
@@ -72,16 +99,6 @@ export default function Footer() {
             <h3 className="text-lg font-semibold mb-4 text-foreground">Legal</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/guest-posts" className="hover:text-foreground transition-colors">
-                  Guest Posts
-                </Link>
-              </li>
-              <li>
-                <Link href="/update-ai" className="hover:text-foreground transition-colors">
-                  Update AI
-                </Link>
-              </li>
-              <li>
                 <Link href="/privacy" className="hover:text-foreground transition-colors">
                   Privacy Policy
                 </Link>
@@ -94,6 +111,11 @@ export default function Footer() {
               <li>
                 <Link href="/disclaimer" className="hover:text-foreground transition-colors">
                   Affiliate Disclaimer
+                </Link>
+              </li>
+              <li>
+                <Link href="/refund-policy" className="hover:text-foreground transition-colors">
+                  Refund Policy
                 </Link>
               </li>
             </ul>

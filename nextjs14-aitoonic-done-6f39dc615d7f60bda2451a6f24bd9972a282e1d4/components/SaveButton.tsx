@@ -9,9 +9,10 @@ interface SaveButtonProps {
     toolId: string
     onAuthRequired: () => void
     className?: string
+    showLabel?: boolean
 }
 
-export default function SaveButton({ toolId, onAuthRequired, className = '' }: SaveButtonProps) {
+export default function SaveButton({ toolId, onAuthRequired, className = '', showLabel = false }: SaveButtonProps) {
     const { user, loading: authLoading } = useAuth()
     const [saved, setSaved] = useState(false)
     const [loading, setLoading] = useState(true)
@@ -120,8 +121,11 @@ export default function SaveButton({ toolId, onAuthRequired, className = '' }: S
             >
                 <Bookmark
                     className={`transition-transform duration-300 ${saved ? 'fill-primary scale-110' : 'scale-100'
-                        } ${className.includes('w-') ? '' : 'w-5 h-5'}`} // Default size if not overridden
+                        } ${showLabel ? 'w-5 h-5' : (className.includes('w-') ? '' : 'w-5 h-5')}`} // Default size if not overridden
                 />
+                {showLabel && (
+                    <span className="ml-1.5">{saved ? 'Saved' : 'Save'}</span>
+                )}
             </div>
 
             {showToast && (

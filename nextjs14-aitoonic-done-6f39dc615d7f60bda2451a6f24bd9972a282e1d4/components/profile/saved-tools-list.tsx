@@ -15,48 +15,15 @@ type Tool = {
     seo_description?: string
 }
 
-export default function SavedToolsList({ userId }: { userId: string }) {
+export default function SavedToolsList({ userId, initialTools = [] }: { userId: string, initialTools?: Tool[] }) {
     const supabase = createClient()
-    const [tools, setTools] = useState<Tool[]>([])
-    const [loading, setLoading] = useState(true)
+    const [tools, setTools] = useState<Tool[]>(initialTools)
+    // No loading state needed if data is provided from server
+    const [loading, setLoading] = useState(false)
 
-    const fetchSavedTools = async () => {
-        try {
-            setLoading(true)
-            const { data, error } = await supabase
-                .from('saved_tools')
-                .select('tool_id')
-                .eq('user_id', userId)
-
-            if (error) {
-                throw error
-            }
-
-            if (data && data.length > 0) {
-                const toolIds = data.map(item => item.tool_id)
-                const { data: toolsData, error: toolsError } = await supabase
-                    .from('tools')
-                    .select('id, name, slug, image_url, seo_description, description')
-                    .in('id', toolIds)
-
-                if (toolsError) {
-                    throw toolsError
-                }
-                setTools(toolsData || [])
-            } else {
-                setTools([])
-            }
-
-        } catch (error) {
-            console.error('Error fetching saved tools:', error)
-        } finally {
-            setLoading(false)
-        }
-    }
-
-    useEffect(() => {
-        fetchSavedTools()
-    }, [userId])
+    // Effect only needed if we want to refresh, but for now we assume data is fresh from server nav
+    // If you want real-time updates, you'd keep an effect or subscription. 
+    // To minimize egress, we rely on the server validation.
 
     const removeTool = async (toolId: string) => {
         const { error } = await supabase

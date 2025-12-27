@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import HomeClient from './HomeClient'
-import { getCategories, getToolsCount } from '@/lib/api'
+import { getCategories, getToolsCount, getToolsByCategory, getRecentTools } from '@/lib/api'
 import { getCanonicalUrl, defaultRobots } from '@/lib/seo/canonical'
 import { generateHomePageJsonLd } from '@/lib/seo/structured-data'
 import { sanitizeJsonLd } from '@/lib/sanitize-jsonld'
@@ -55,11 +55,28 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
+
+
+// ...
+
 export default async function HomePage() {
-  const [categories, toolsCount] = await Promise.all([
+  const [categories, toolsCount, recentTools] = await Promise.all([
     getCategories(),
-    getToolsCount()
+    getToolsCount(),
+    getRecentTools(7, 8)
   ])
+
+  // Optimization: Pre-fetch tools for top categories to avoid client-side egress
+  // This runs at build time (ISR) or revalidation, not per-visitor.
+  const topCategories = categories.slice(0, 4)
+  const categoryToolsResults = await Promise.all(
+    topCategories.map(cat => getToolsByCategory(cat.id, 8))
+  )
+
+  const initialCategoryTools: Record<string, any[]> = {}
+  topCategories.forEach((cat, index) => {
+    initialCategoryTools[cat.id] = categoryToolsResults[index]
+  })
 
   const homeJsonLd = generateHomePageJsonLd(categories.length, toolsCount)
 
@@ -95,7 +112,12 @@ export default async function HomePage() {
           </section>
         </div>
       </div>
-      <HomeClient showHero={false} />
+      <HomeClient
+        showHero={false}
+        initialCategories={categories}
+        initialCategoryTools={initialCategoryTools}
+        initialTools={recentTools}
+      />
     </>
   )
 }
